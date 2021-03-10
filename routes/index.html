@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+
+<head>
+    <title>Depositary Reciepts</title>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css"
+        integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+    <script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"
+        integrity="sha384-DfXdz2htPH0lsSSs5nCTpuj/zy4C+OGpamoFVy38MVBnE+IbbVYUew+OrCXaRkfj"
+        crossorigin="anonymous"></script>
+    <script type="text/javascript" src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.1.2/Chart.min.js"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/js/bootstrap.min.js"
+        integrity="sha384-OgVRvuATP1z7JjHLkuOU7Xw704+h835Lr+6QL9UvYjZE3Ipu6Tp75j7Bh/kR0JKI"
+        crossorigin="anonymous"></script>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+
+    <script src="/socket.io/socket.io.js"></script>
+    <script>
+        var socket = io();
+    </script>
+
+</head>
+
+
+
+
+
+<style>
+
+    
+    [data-theme="dark"] {
+        background-color: #111 !important;
+        color: #eee!important;
+    }
+
+    [data-theme="dark"] table {
+        color: #eee!important;
+    }
+
+    [data-theme="dark"] .bg-light {
+    background-color: #333 !important;
+    }
+
+    [data-theme="dark"] .bg-white {
+    background-color: #000 !important;
+    }
+
+    [data-theme="dark"] .bg-black {
+    background-color: #eee !important;
+    }
+
+    [data-theme="dark"] a {
+    color: #eee !important;
+    }
+
+    [data-theme="dark"] option {
+    color: #eee !important;
+    }
+
+    [data-theme="dark"] select.form-control{
+        color: #eee;
+        background-color: #333;
+        border-color: #333;
+    }
+
+    [data-theme="dark"] a.disabled{
+        color: #bbb!important;
+    }
+
+    [data-theme="dark"] .border {
+        border-color: #191919!important;
+    }
+
+    [data-theme="dark"] input.border {
+        border-color: #191919!important;
+    }
+
+    [data-theme="dark"] label.border {
+        border-color: #191919!important;
+    }
+
+
+    [data-theme="dark"] .border-bottom {
+        border-color: #191919!important;
+    }
+
+    [data-theme="dark"] table.border-bottom {
+        border-color: #eee!important;
+    }
+
+
+    [data-theme="dark"] input.form-control{
+        color: #eee;
+        background-color: #333;
+    }
+
+    [data-theme="dark"] .progress{
+        background-color: #333;
+    }
+
+    [data-theme="dark"] button.btn-light{
+        background-color: #333!important;
+        border-color: #191919!important;
+        color: #eee;
+    }
+
+
+    [data-theme="dark"] button.btn-light:hover{
+        background-color: #444!important;
+
+    }
+
+    [data-theme="dark"] p {
+        color: 'white'
+    }
+
+    .img__container {
+        position: relative;
+        overflow: hidden;
+    }
+
+    .img__container img {
+        position: absolute;
+        min-height: 100%;
+        min-width: 100%;
+        width: 0;
+    }
+
+
+    img {
+        display: block;
+        max-width: 100%;
+        height: auto;
+    }   
+
+    a {
+        color: #222;
+    }
+
+
+
+    .row.display-flex {
+        display: flex;
+        flex-wrap: wrap;
+    }
+
+    .row.display-flex>[class*='col-'] {
+        display: flex;
+        flex-direction: column;
+    }
+
+
+    /*== start of code for tooltips ==*/
+    .tool {
+        cursor: help;
+        position: relative;
+    }
+
+
+    /*== common styles for both parts of tool tip ==*/
+    .tool::before,
+    .tool::after {
+        left: 50%;
+        opacity: 0;
+        position: absolute;
+        z-index: -100;
+    }
+
+    .tool:hover::before,
+    .tool:focus::before,
+    .tool:hover::after,
+    .tool:focus::after {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+        z-index: 100;
+    }
+
+
+    /*== pointer tip ==*/
+    .tool::before {
+        border-style: solid;
+        border-width: 1em 0.75em 0 0.75em;
+        border-color: #3E474F transparent transparent transparent;
+        bottom: 100%;
+        content: "";
+        margin-left: -0.5em;
+        transition: all .65s cubic-bezier(.84, -0.18, .31, 1.26), opacity .65s .5s;
+        transform: scale(.6) translateY(-90%);
+    }
+
+    .tool:hover::before,
+    .tool:focus::before {
+        transition: all .65s cubic-bezier(.84, -0.18, .31, 1.26) .2s;
+    }
+
+
+    /*== speech bubble ==*/
+    .tool::after {
+        background: #3E474F;
+        border-radius: .25em;
+        bottom: 180%;
+        color: #EDEFF0;
+        content: attr(data-tip);
+        margin-left: -8.75em;
+        padding: 1em;
+        transition: all .65s cubic-bezier(.84, -0.18, .31, 1.26) .2s;
+        transform: scale(.6) translateY(50%);
+        width: 17.5em;
+    }
+
+    .tool:hover::after,
+    .tool:focus::after {
+        transition: all .65s cubic-bezier(.84, -0.18, .31, 1.26);
+    }
+
+    @media (max-width: 760px) {
+        .tool::after {
+            font-size: .75em;
+            margin-left: -5em;
+            width: 10em;
+        }
+    }
+</style>
+
+
+<body onload="loadHistorical()">
+    <div class="container">
+
+
+        <div class="pb-2 mt-4 mb-3">
+    <!-- IF ADDING TITYLE BACK, ADD BORDER-BOTTOM ATTRIBUTE TO DIV
+            <br>
+             <h1>American Depositary Receipts Prices For Australian Banks</h1> 
+
+        </div>
+    -->
+        <div class="row display-flex">
+
+
+
+            <div class="col-md-12">
+
+                <div class="p-2">
+
+                    <div class="bg-light rounded-top border p-2">Banks</div>
+
+                    <div class="border-left border-right border-bottom rounded-bottom p-2">
+
+                        <table class="table border-bottom">
+                            <thead>
+                                <tr>
+                                    <th scope="col"></th>
+                                    <th scope="col">Bank</th>
+                                    <th scope="col"><div> ASX Price (AUD)</div><small id="ASX_time"></small></th>
+                                    <th scope="col"><div> ADR Price (AUD)</div><small id="ADR_time"></small></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th scope="row"> <img width=32px src="./media/ANZ.png" class="" alt="ANZ">  </th>
+                                    <td>ANZ</td>
+                                    <td><p id="ANZ_ASX"> </p></td>
+                                    <td><p id="ANZ_ADR"> </p></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"> <img width=32px src="./media/CBA.png" class="" alt="CBA">  </th>
+                                    <td>CBA</td>
+                                    <td><p id="CBA_ASX"> </p></td>
+                                    <td><p id="CBA_ADR"> </p></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"> <img width=32px src="./media/NAB.png" class="" alt="NAB">  </th>
+                                    <td>NAB</td>
+                                    <td><p id="NAB_ASX"> </p></td>
+                                    <td><p id="NAB_ADR"> </p></td>
+                                </tr>
+                                <tr>
+                                    <th scope="row"> <img width=32px src="./media/WBC.png" class="" alt="WBC">  </th>
+                                    <td>WBC</td>
+                                    <td><p id="WBC_ASX"> </p></td>
+                                    <td><p id="WBC_ADR"> </p></td>
+                                </tr>
+                            </tbody>
+                        </table>
+
+
+                    </div>
+                </div>
+
+
+
+                <div class="p-2">
+                
+                    <div class="bg-light rounded-top border p-2">Other</div>
+                
+                    <div class="border-left border-right border-bottom rounded-bottom p-2">
+                
+                        <table class="table border-bottom">
+                            <thead>
+                                <tr>
+                                    <th scope="col"></th>
+                                    <th scope="col">Index</th>
+                                    <th scope="col">
+                                        <div> Price (AUD) </div><small id="ASX_time"></small>
+                                    </th>
+
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <tr>
+                                    <th scope="row"> <img width=32px src="./media/AUDUSD.png" class="" alt="AUD/USD"> </th>
+                                    <td><div class="font-weight-bold">AUD/USD</div><small id="AUDUSDdate"></small></td>
+                                    <td>
+                                        <p id="AUDUSD=X"> </p>
+                                    </td>
+
+                                </tr>
+                                <tr>
+                                    <th scope="row"> <img width=32px src="./media/DJI.png" class="" alt="Dow Futures"> </th>
+                                    <td><div class="font-weight-bold">DOW Future</div> <small id="DowDate"></small></td>
+                                    <td>
+                                        <p id="^DJI"> </p>
+                                    </td>
+
+                                </tr>
+                                <tr>
+                                    <th scope="row"> <img width=32px src="./media/SandP.png" class="" alt="^GSPC"> </th>
+                                    <td><div class="font-weight-bold">S&P 500 Futures</div> <small id="SPDate"></small></td>
+                                    <td>
+                                        <p id="^GSPC"> </p>
+                                    </td>
+
+                                </tr>
+
+                            </tbody>
+                        </table>
+                
+                
+                    </div>
+                </div>
+
+                <footer class="footer">
+                    <p class="text-muted float-right float-top sticky-top pr-2"><small> Written by James Gill </small></p>
+                    <div class="custom-control custom-switch">
+                        <input type="checkbox" class="custom-control-input" id="darkSwitch" />
+                        <label class="custom-control-label" for="darkSwitch">Dark Mode</label>
+                    </div>
+                    <script src="./scripts/dark-mode-switch.min.js"></script>
+                </footer>
+            </div>
+
+
+        </div>
+
+
+    </div>
+
+
+
+</body>
+
+<script src="/socket.io/socket.io.js"></script>
+<script>
+
+    function numberWithCommas(x) {
+        return x.toString().replace(/\B(?=(\d{3})+(?!\d))/g, ",");
+    }
+
+    function loadHistorical(){ 
+
+        
+        function futuresPrices() {
+
+
+            function callback() {
+
+                var response = unescape(this.responseText)
+                var responseObject = JSON.parse(response);
+
+                console.log(responseObject)
+
+                var YMFaud = responseObject["YM=F"].price.regularMarketPrice / document.getElementById("AUDUSD=X").innerText
+                var YMFtime = new Date(responseObject["YM=F"].price.regularMarketTime).toLocaleString()
+
+                var ESFaud = responseObject["ES=F"].price.regularMarketPrice / document.getElementById("AUDUSD=X").innerText
+                var ESFtime = new Date(responseObject["ES=F"].price.regularMarketTime).toLocaleString()
+
+                document.getElementById("^DJI").innerText = numberWithCommas(YMFaud.toFixed(2))
+                document.getElementById("DowDate").innerText = YMFtime.toLocaleString()
+
+                document.getElementById("^GSPC").innerText = numberWithCommas(ESFaud.toFixed(2))
+                document.getElementById("SPDate").innerText = ESFtime
+
+            }
+
+            function refreshData() {
+
+                var x = 2
+
+                var xhr = new XMLHttpRequest();
+                xhr.addEventListener("load", callback);
+                xhr.open("GET", "/futurePrices");
+                xhr.send();
+
+                setTimeout(refreshData, x * 1000);
+
+            }
+
+
+            refreshData(); // execute function
+
+        }
+
+
+        futuresPrices()
+
+        console.log('done')
+
+        function callback() {
+
+            var response = unescape(this.responseText)
+            var responseObject = JSON.parse(response);
+
+            console.log(responseObject)
+
+            document.getElementById("ADR_time").innerText = responseObject["ausADR"].time
+            document.getElementById("ASX_time").innerText = responseObject["ausTickets"].time
+
+            document.getElementById("ANZ_ASX").innerText = responseObject["ausTickets"].ANZ
+            document.getElementById("ANZ_ADR").innerText = responseObject["ausADR"].ANZBY
+
+            document.getElementById("CBA_ASX").innerText = responseObject["ausTickets"].CBA
+            document.getElementById("CBA_ADR").innerText = responseObject["ausADR"].CMWAY
+
+            document.getElementById("NAB_ASX").innerText = responseObject["ausTickets"].NAB
+            document.getElementById("NAB_ADR").innerText = responseObject["ausADR"].NABZY
+
+            document.getElementById("WBC_ASX").innerText = responseObject["ausTickets"].WBC
+            document.getElementById("WBC_ADR").innerText = responseObject["ausADR"].WBK
+
+        }
+
+        var xhr = new XMLHttpRequest();
+        xhr.addEventListener("load", callback);
+        xhr.open("GET", "/prices");
+        xhr.send();
+
+    }
+
+    var socket = io();
+
+    socket.on('ANZ.AX', function (msg) {
+        document.getElementById("ASX_time").innerText = 'Live (20 minute delay)'
+        document.getElementById("ANZ_ASX").innerText = msg.toFixed(2)
+        console.log(msg)
+    }); 
+
+    socket.on('CBA.AX', function (msg) {
+        document.getElementById("ASX_time").innerText = 'Live (20 minute delay)'
+        document.getElementById("CBA_ASX").innerText = msg.toFixed(2)
+        console.log(msg)
+    });
+
+    socket.on('NAB.AX', function (msg) {
+        document.getElementById("ASX_time").innerText = 'Live (20 minute delay)'
+        document.getElementById("CBA_ASX").innerText = msg.toFixed(2)
+        console.log(msg)
+    });
+
+    socket.on('WBC.AX', function (msg) {
+        document.getElementById("ASX_time").innerText = 'Live (20 minute delay)'
+        document.getElementById("CBA_ASX").innerText = msg.toFixed(2)
+        console.log(msg)
+    });
+
+    socket.on('ANZBY', function (msg) {
+        document.getElementById("ADR_time").innerText = 'Live (20 minute delay)'
+        document.getElementById("ANZ_ADR").innerText = msg.toFixed(2)
+    });
+
+    socket.on('CMWAY', function (msg) {
+        document.getElementById("ADR_time").innerText = 'Live (20 minute delay)'
+        document.getElementById("CBA_ADR").innerText = msg.toFixed(2)
+        console.log(msg)
+    });
+
+    socket.on('NABZY', function (msg) {
+        document.getElementById("ADR_time").innerText = 'Live (20 minute delay)'
+        document.getElementById("NAB_ADR").innerText = msg.toFixed(2)
+        console.log(msg)
+    });
+
+    socket.on('WBK', function (msg) {
+        document.getElementById("ADR_time").innerText = 'Live (20 minute delay)'
+        document.getElementById("WBC_ADR").innerText = msg.toFixed(2)
+        console.log(msg)
+    });
+
+    socket.on('AUDUSD=X', function (msg) {
+        document.getElementById("AUDUSD=X").innerText = msg.toFixed(4)
+        document.getElementById("AUDUSDdate").innerText = new Date().toLocaleString();
+        console.log(msg)
+    });
+
+</script>
+
